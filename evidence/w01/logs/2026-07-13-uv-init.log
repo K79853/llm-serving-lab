@@ -1,0 +1,126 @@
+uv 0.11.28 (x86_64-unknown-linux-gnu)
+/home/kai/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/bin/python3.11
+Using CPython 3.11.15
+Resolved 39 packages in 2.01s
+Using CPython 3.11.15
+Resolved 39 packages in 0.98ms
+Using CPython 3.11.15
+Creating virtual environment at: .venv
+Resolved 39 packages in 1ms
+   Building llm-serving-lab @ file:///home/kai/code/codex_project/llm-serving-lab
+      Built llm-serving-lab @ file:///home/kai/code/codex_project/llm-serving-lab
+Downloading transformers (11.0MiB)
+Downloading pydantic-core (2.0MiB)
+Downloading tokenizers (3.1MiB)
+Downloading hf-xet (4.3MiB)
+Downloading numpy (16.1MiB)
+ Downloaded pydantic-core
+ Downloaded tokenizers
+ Downloaded hf-xet
+ Downloaded transformers
+ Downloaded numpy
+Prepared 33 packages in 4.06s
+Installed 38 packages in 326ms
+ + annotated-doc==0.0.4
+ + annotated-types==0.7.0
+ + anyio==4.14.2
+ + certifi==2026.6.17
+ + click==8.4.2
+ + fastapi==0.139.0
+ + filelock==3.29.7
+ + fsspec==2026.6.0
+ + h11==0.16.0
+ + hf-xet==1.5.1
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + huggingface-hub==1.23.0
+ + idna==3.18
+ + iniconfig==2.3.0
+ + llm-serving-lab==0.1.0 (from file:///home/kai/code/codex_project/llm-serving-lab)
+ + markdown-it-py==4.2.0
+ + mdurl==0.1.2
+ + numpy==2.4.6
+ + packaging==26.2
+ + pluggy==1.6.0
+ + pydantic==2.13.4
+ + pydantic-core==2.46.4
+ + pygments==2.20.0
+ + pytest==9.1.1
+ + pyyaml==6.0.3
+ + regex==2026.7.10
+ + rich==15.0.0
+ + safetensors==0.8.0
+ + shellingham==1.5.4
+ + starlette==1.3.1
+ + tokenizers==0.22.2
+ + tqdm==4.68.4
+ + transformers==5.13.1
+ + typer==0.26.8
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.2
+ + uvicorn==0.51.0
+Python 3.11.15
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+imports-ok
+package-ok
+Resolved 39 packages in 2ms
+llm-serving-lab v0.1.0
+├── fastapi v0.139.0
+│   ├── annotated-doc v0.0.4
+│   ├── pydantic v2.13.4
+│   │   ├── annotated-types v0.7.0
+│   │   ├── pydantic-core v2.46.4
+│   │   │   └── typing-extensions v4.16.0
+│   │   ├── typing-extensions v4.16.0
+│   │   └── typing-inspection v0.4.2
+│   │       └── typing-extensions v4.16.0
+│   ├── starlette v1.3.1
+│   │   ├── anyio v4.14.2
+│   │   │   ├── idna v3.18
+│   │   │   └── typing-extensions v4.16.0
+│   │   └── typing-extensions v4.16.0
+│   ├── typing-extensions v4.16.0
+│   └── typing-inspection v0.4.2 (*)
+├── httpx v0.28.1
+│   ├── anyio v4.14.2 (*)
+│   ├── certifi v2026.6.17
+│   ├── httpcore v1.0.9
+│   │   ├── certifi v2026.6.17
+│   │   └── h11 v0.16.0
+│   └── idna v3.18
+├── transformers v5.13.1
+│   ├── huggingface-hub v1.23.0
+│   │   ├── click v8.4.2
+│   │   ├── filelock v3.29.7
+│   │   ├── fsspec v2026.6.0
+│   │   ├── hf-xet v1.5.1
+│   │   ├── httpx v0.28.1 (*)
+│   │   ├── packaging v26.2
+│   │   ├── pyyaml v6.0.3
+│   │   ├── tqdm v4.68.4
+│   │   └── typing-extensions v4.16.0
+│   ├── numpy v2.4.6
+│   ├── packaging v26.2
+│   ├── pyyaml v6.0.3
+│   ├── regex v2026.7.10
+│   ├── safetensors v0.8.0
+│   ├── tokenizers v0.22.2
+│   │   └── huggingface-hub v1.23.0 (*)
+│   ├── tqdm v4.68.4
+│   └── typer v0.26.8
+│       ├── annotated-doc v0.0.4
+│       ├── rich v15.0.0
+│       │   ├── markdown-it-py v4.2.0
+│       │   │   └── mdurl v0.1.2
+│       │   └── pygments v2.20.0
+│       └── shellingham v1.5.4
+├── uvicorn v0.51.0
+│   ├── click v8.4.2
+│   └── h11 v0.16.0
+└── pytest v9.1.1 (group: dev)
+    ├── iniconfig v2.3.0
+    ├── packaging v26.2
+    ├── pluggy v1.6.0
+    └── pygments v2.20.0
+(*) Package tree already displayed
+98b7f2d8d4039a259ea3823ec1e95e2c690049340b790ebb4864e2cba3a3e955  uv.lock

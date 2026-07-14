@@ -1,0 +1,257 @@
+{
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "samples": [
+    {
+      "case_name": "english_sentence",
+      "text": "LLM serving latency depends on token count.",
+      "character_count": 43,
+      "add_special_tokens": false,
+      "tokens": [
+        "LL",
+        "M",
+        "Ġserving",
+        "Ġlatency",
+        "Ġdepends",
+        "Ġon",
+        "Ġtoken",
+        "Ġcount",
+        "."
+      ],
+      "token_ids": [
+        4086,
+        44,
+        13480,
+        39270,
+        13798,
+        389,
+        3950,
+        1760,
+        13
+      ],
+      "token_count": 9,
+      "decoded_text": "LLM serving latency depends on token count."
+    },
+    {
+      "case_name": "english_sentence",
+      "text": "LLM serving latency depends on token count.",
+      "character_count": 43,
+      "add_special_tokens": true,
+      "tokens": [
+        "LL",
+        "M",
+        "Ġserving",
+        "Ġlatency",
+        "Ġdepends",
+        "Ġon",
+        "Ġtoken",
+        "Ġcount",
+        "."
+      ],
+      "token_ids": [
+        4086,
+        44,
+        13480,
+        39270,
+        13798,
+        389,
+        3950,
+        1760,
+        13
+      ],
+      "token_count": 9,
+      "decoded_text": "LLM serving latency depends on token count."
+    },
+    {
+      "case_name": "chinese_sentence",
+      "text": "大模型推理延迟取决于输入和输出 token 数量。",
+      "character_count": 25,
+      "add_special_tokens": false,
+      "tokens": [
+        "å¤§",
+        "æ¨¡åŀĭ",
+        "æİ¨çĲĨ",
+        "å»¶è¿Ł",
+        "åıĸåĨ³äºİ",
+        "è¾ĵåħ¥",
+        "åĴĮ",
+        "è¾ĵåĩº",
+        "Ġtoken",
+        "Ġæķ°",
+        "éĩı",
+        "ãĢĤ"
+      ],
+      "token_ids": [
+        26288,
+        104949,
+        113272,
+        112881,
+        108747,
+        31196,
+        33108,
+        66017,
+        3950,
+        47685,
+        32757,
+        1773
+      ],
+      "token_count": 12,
+      "decoded_text": "大模型推理延迟取决于输入和输出 token 数量。"
+    },
+    {
+      "case_name": "chinese_sentence",
+      "text": "大模型推理延迟取决于输入和输出 token 数量。",
+      "character_count": 25,
+      "add_special_tokens": true,
+      "tokens": [
+        "å¤§",
+        "æ¨¡åŀĭ",
+        "æİ¨çĲĨ",
+        "å»¶è¿Ł",
+        "åıĸåĨ³äºİ",
+        "è¾ĵåħ¥",
+        "åĴĮ",
+        "è¾ĵåĩº",
+        "Ġtoken",
+        "Ġæķ°",
+        "éĩı",
+        "ãĢĤ"
+      ],
+      "token_ids": [
+        26288,
+        104949,
+        113272,
+        112881,
+        108747,
+        31196,
+        33108,
+        66017,
+        3950,
+        47685,
+        32757,
+        1773
+      ],
+      "token_count": 12,
+      "decoded_text": "大模型推理延迟取决于输入和输出 token 数量。"
+    },
+    {
+      "case_name": "python_signature",
+      "text": "def stream_tokens(n: int) -> list[str]:",
+      "character_count": 39,
+      "add_special_tokens": false,
+      "tokens": [
+        "def",
+        "Ġstream",
+        "_tokens",
+        "(n",
+        ":",
+        "Ġint",
+        ")",
+        "Ġ->",
+        "Ġlist",
+        "[str",
+        "]:"
+      ],
+      "token_ids": [
+        750,
+        4269,
+        28838,
+        1445,
+        25,
+        526,
+        8,
+        1464,
+        1140,
+        17303,
+        5669
+      ],
+      "token_count": 11,
+      "decoded_text": "def stream_tokens(n: int) -> list[str]:"
+    },
+    {
+      "case_name": "python_signature",
+      "text": "def stream_tokens(n: int) -> list[str]:",
+      "character_count": 39,
+      "add_special_tokens": true,
+      "tokens": [
+        "def",
+        "Ġstream",
+        "_tokens",
+        "(n",
+        ":",
+        "Ġint",
+        ")",
+        "Ġ->",
+        "Ġlist",
+        "[str",
+        "]:"
+      ],
+      "token_ids": [
+        750,
+        4269,
+        28838,
+        1445,
+        25,
+        526,
+        8,
+        1464,
+        1140,
+        17303,
+        5669
+      ],
+      "token_count": 11,
+      "decoded_text": "def stream_tokens(n: int) -> list[str]:"
+    },
+    {
+      "case_name": "mixed_unicode",
+      "text": "Hello，世界! 🚀",
+      "character_count": 11,
+      "add_special_tokens": false,
+      "tokens": [
+        "Hello",
+        "ï¼Į",
+        "ä¸ĸçķĮ",
+        "!",
+        "ĠðŁ",
+        "ļ",
+        "Ģ"
+      ],
+      "token_ids": [
+        9707,
+        3837,
+        99489,
+        0,
+        11162,
+        248,
+        222
+      ],
+      "token_count": 7,
+      "decoded_text": "Hello，世界! 🚀"
+    },
+    {
+      "case_name": "mixed_unicode",
+      "text": "Hello，世界! 🚀",
+      "character_count": 11,
+      "add_special_tokens": true,
+      "tokens": [
+        "Hello",
+        "ï¼Į",
+        "ä¸ĸçķĮ",
+        "!",
+        "ĠðŁ",
+        "ļ",
+        "Ģ"
+      ],
+      "token_ids": [
+        9707,
+        3837,
+        99489,
+        0,
+        11162,
+        248,
+        222
+      ],
+      "token_count": 7,
+      "decoded_text": "Hello，世界! 🚀"
+    }
+  ]
+}

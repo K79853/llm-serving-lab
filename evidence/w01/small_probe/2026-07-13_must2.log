@@ -1,3 +1,4 @@
+command: uv run --locked python evidence/w01/small_probe/2026-07-13_must2.py
 [transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
 without_special_ids: [35127, 752, 264, 2805, 16800, 311, 3460, 4128, 1614, 13]
 with_special_ids: [35127, 752, 264, 2805, 16800, 311, 3460, 4128, 1614, 13]

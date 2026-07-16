@@ -1,56 +1,58 @@
 # Inference Basics: Tokenization and Greedy Autoregressive Generation
 
-- **Date**: 2026-07-16
-- **Scope**: tokenizer behavior and deterministic greedy generation control flow
-- **Repository evidence**:
+- **日期**：2026-07-16
+- **范围**：tokenizer 行为与确定性 greedy 自回归生成控制流
+- **仓库证据**：
   - `results/w01/tokenizer_probe.json`
   - `results/w01/autoregressive_toy.json`
-  - reviewed through `b91f3aa6a73007c1cd93dd7227807d6f571899a3`
-- **Non-goals**: real model logits, model weights, GPU performance, prefill/decode timing, KV Cache measurement, batching, or online Serving behavior
+  - 已评审至 `b91f3aa6a73007c1cd93dd7227807d6f571899a3`
+- **非目标**：真实模型 logits、模型权重、GPU 性能、prefill/decode 计时、KV Cache 测量、batching 或在线 Serving 行为
 
 ## 1. Text → Token → ID
 
-A language model does not directly consume raw strings. The tokenizer converts text into the numerical representation expected by the model:
+语言模型不能直接处理原始字符串。Tokenizer 负责把文本转换成模型使用的数值表示：
 
 ```text
 raw text
-  → tokenizer applies its tokenization rules
+  → tokenizer 按固定规则切分或变换
   → token strings
   → vocabulary lookup
   → token IDs
 ```
 
-A **token** is a unit produced by a particular tokenizer. It may be a word, a subword, punctuation, whitespace-bearing fragment, character, or byte-like unit. It is not generally equal to a human word or a Unicode character.
+**Token** 是某个 tokenizer 产生的基本单位。它可能是单词、子词、标点、带空格的片段、字符或 byte-like 单元，因此不能默认等于“一个单词”或“一个 Unicode 字符”。
 
-A **vocabulary** is the tokenizer-specific mapping between token strings and integer IDs. A **token ID** is therefore meaningful only together with the corresponding tokenizer and vocabulary. The same integer can represent different tokens in different vocabularies.
+**Vocabulary** 是 token string 与整数 ID 之间的 tokenizer-specific 映射。**Token ID** 只有与对应 tokenizer 和 vocabulary 一起使用时才有意义；不同 vocabulary 中相同的整数可能表示不同 token。
 
-Encoding consists of two logical steps:
+Encoding 在逻辑上包含两步：
 
-1. split or transform the input into tokens according to the tokenizer rules;
-2. map those tokens to IDs using the tokenizer vocabulary.
+1. 根据 tokenizer 规则把文本转换成 tokens；
+2. 使用 vocabulary 把 tokens 映射成 IDs。
 
-Decoding applies the tokenizer's reconstruction rules to IDs and produces readable text. It is not generally equivalent to concatenating the visible token strings, because token strings may contain tokenizer-specific whitespace or byte markers.
+Decoding 则使用 tokenizer 的重组规则把 IDs 转回可读文本。它通常不能用简单的 `"".join(tokens)` 代替，因为 token string 可能包含 tokenizer 特有的空格标记、子词标记或 byte 表示。
 
 ### 1.1 Observed tokenizer data
 
-The probe used `Qwen/Qwen2.5-0.5B-Instruct` on four fixed inputs.
+本次 probe 使用 `Qwen/Qwen2.5-0.5B-Instruct` tokenizer，对四条固定输入分别执行 `add_special_tokens=False/True`。
 
-| Case | Python characters | Tokens without special tokens | Tokens with special tokens | IDs equal | Decode matches input |
+| Case | Python 字符数 | False token 数 | True token 数 | IDs 相同 | Decode 恢复原文 |
 |---|---:|---:|---:|---|---|
 | `english_sentence` | 43 | 9 | 9 | Yes | Yes / Yes |
 | `chinese_sentence` | 25 | 12 | 12 | Yes | Yes / Yes |
 | `python_signature` | 39 | 11 | 11 | Yes | Yes / Yes |
 | `mixed_unicode` | 11 | 7 | 7 | Yes | Yes / Yes |
 
-These observations demonstrate that character count is not token count. The 43-character English sentence produced 9 tokens, while the 25-character Chinese sentence produced 12 tokens. This is evidence about these exact inputs and this exact tokenizer; it is not a general claim that one language always uses more tokens than another.
+这些数据直接证明：**字符数不等于 token 数**。当前英文句子有 43 个 Python 字符但只有 9 个 token；中文句子有 25 个字符却有 12 个 token。
 
-For all four inputs, `add_special_tokens=False` and `True` produced identical IDs in the current probe. That does **not** make the setting irrelevant. Other tokenizers, input formats, or chat templates may add control tokens, so a benchmark must still record and hold this setting constant.
+这个结果只适用于当前 tokenizer、当前四条文本和当前调用方式，不能外推为“某种语言普遍比另一种语言更耗 token”。
 
-All eight records decoded back to the original input. This establishes round-trip behavior for the tested inputs, not a universal guarantee for arbitrary normalization rules or tokenizer configurations.
+当前四组输入中，`add_special_tokens=False/True` 得到了相同 IDs。但这不代表该参数可以从 benchmark 中省略。其他 tokenizer、输入格式或 chat template 可能插入控制 token，因此 benchmark 仍必须固定并记录该设置。
+
+八条记录均 decode 回原始文本。这只证明当前样本的 round-trip 行为，不保证任意 tokenizer 配置、normalization 规则或输入都能逐字符恢复。
 
 ## 2. Logits → Next Token
 
-For autoregressive generation, a model uses the current prefix to produce a vector of scores for the next token position. These scores are called **logits**.
+在自回归生成中，模型根据当前完整前缀，为下一个位置产生一组分数，这组分数称为 **logits**：
 
 ```text
 current token IDs
@@ -59,13 +61,13 @@ current token IDs
   → decoding strategy selects next token ID
 ```
 
-If the vocabulary contains `V` entries, the next-token logits contain `V` scores. In greedy decoding, the selected ID is the index of the maximum logit:
+如果 vocabulary 大小为 `V`，下一 token 的 logits 长度也应为 `V`。Greedy decoding 选择最大 logit 所在的索引：
 
 ```text
 next_token_id = argmax(logits)
 ```
 
-Greedy decoding is deterministic when the model state, input, numeric behavior, and tie handling are fixed. It chooses the highest-scoring token at the current step; it does not prove that the complete generated sequence is globally optimal.
+当模型状态、输入、数值行为和并列处理规则固定时，greedy decoding 是确定性的。但它只是在当前一步选择最高分 token，不保证完整序列是全局最优。
 
 ### 2.1 Minimal greedy loop
 
@@ -90,9 +92,9 @@ flowchart TD
     F -- No --> B
 ```
 
-## 3. Two Deterministic Stop Paths
+## 3. Stop Conditions
 
-The project toy uses a five-entry vocabulary:
+项目 toy 使用以下固定 vocabulary：
 
 | ID | Token |
 |---:|---|
@@ -102,67 +104,71 @@ The project toy uses a five-entry vocabulary:
 | 3 | ` cats` |
 | 4 | `<eos>` |
 
-The prompt is `[0, 1]`, the EOS token ID is `4`, and `max_new_tokens` is `5`.
+公共设置：
+
+```text
+prompt_ids = [0, 1]
+eos_token_id = 4
+max_new_tokens = 5
+```
 
 ### 3.1 EOS path
 
 ```text
-prompt_ids    = [0, 1]
 generated_ids = [2, 3, 4]
 final_ids     = [0, 1, 2, 3, 4]
 step count    = 3
 stop_reason   = "eos"
 ```
 
-The third generated ID is the EOS ID, so generation stops before reaching the length limit.
+第三个新 token 的 ID 为 `4`，即 EOS，因此在达到长度上限前停止。
 
 ### 3.2 Length path
 
 ```text
-prompt_ids    = [0, 1]
 generated_ids = [2, 3, 2, 3, 2]
 final_ids     = [0, 1, 2, 3, 2, 3, 2]
 step count    = 5
 stop_reason   = "max_new_tokens"
 ```
 
-This transition table never selects EOS. Generation stops immediately after the fifth new token is appended.
+该 transition table 始终不会选中 EOS，因此在 append 第五个新 token 后达到上限并停止。
 
-### 3.3 Stop-condition priority
+### 3.3 Priority
 
-After appending a new token, the toy checks conditions in this order:
+每一步 append 完成后，停止判断顺序为：
 
-1. if `next_id == eos_token_id`, use `stop_reason="eos"`;
-2. otherwise, if generated-token count reaches `max_new_tokens`, use `stop_reason="max_new_tokens"`.
+1. 若 `next_id == eos_token_id`，停止原因为 `eos`；
+2. 否则，若新增 token 数达到 `max_new_tokens`，停止原因为 `max_new_tokens`。
 
-Therefore, if EOS is generated exactly at the length boundary, the semantic reason remains `eos`.
+因此，如果 EOS 恰好在长度边界被生成，语义上的停止原因仍应记录为 `eos`。
 
 ## 4. Serving Implications
 
 ### 4.1 Input tokens are a prefill workload proxy
 
-In standard decoder-only inference, the service first processes the prompt tokens and establishes the state required for generation, including the prompt-side KV Cache. This stage is commonly called **prefill**.
+在标准 decoder-only 推理中，服务首先处理 prompt tokens，并建立后续生成需要的状态，包括 prompt 对应的 KV Cache。该阶段通常称为 **prefill**。
 
-More input tokens usually imply more prefill work and more KV Cache state. However, input-token count is only a workload proxy. Actual cost also depends on the model, attention implementation, hardware, numeric precision, batch composition, prefix reuse, cache hits, and scheduler behavior.
+输入 token 越多，通常意味着更多 prefill 工作和更多 KV Cache 状态。但 input-token count 只是 workload proxy。实际成本还会受到模型结构、attention 实现、硬件、数值精度、batch 组成、prefix reuse、cache hit 和调度器行为影响。
 
 ### 4.2 Output tokens are a decode-iteration proxy
 
-After prefill, standard autoregressive decoding extends the sequence step by step. The basic greedy toy generates one new token per loop iteration, so output-token count is an important proxy for the number of sequential decode iterations.
+Prefill 之后，标准自回归 decode 逐步扩展序列。当前 greedy toy 每轮生成一个新 token，因此 output-token count 是顺序 decode 迭代次数的重要 proxy。
 
-This relationship is central to latency and capacity planning, but it is not the complete performance model. Real systems may batch requests, reuse KV state, apply optimized kernels, or use methods that produce or verify multiple candidate tokens.
+这对延迟和容量规划很关键，但仍不是完整性能模型。真实系统可能合并不同请求、复用 KV 状态、使用优化 kernel，或采用一次提出/验证多个候选 token 的方法。
 
 ### 4.3 Why request count and string length are insufficient
 
-Counting requests alone treats very different workloads as equivalent. Ten requests with short prompts and short outputs are not the same workload as ten requests with long prompts and long outputs.
+仅统计请求数会把差异巨大的 workload 当成相同工作量。十个短 prompt、短输出请求，与十个长 prompt、长输出请求显然不是同一负载。
 
-Character count is also insufficient because tokenization depends on the tokenizer and input content. In the current evidence:
+字符串长度也不足以替代 token 数，因为 tokenization 取决于 tokenizer 和输入内容。当前证据是：
 
 ```text
 43 English characters → 9 tokens
 25 Chinese characters → 12 tokens
 ```
 
-A useful benchmark therefore records at least:
+因此，Serving benchmark 至少应记录：
 
 ```text
 input token count
@@ -172,68 +178,68 @@ model and tokenizer identity
 input construction and special-token policy
 ```
 
-Later stages will add timing, queueing, batching, and memory metrics.
+后续阶段再增加 timing、queueing、batching 和 memory 指标。
 
 ### 4.4 Token count is not complete compute cost
 
-Two requests with the same token counts can still have different performance because of:
+即使两个请求的 input/output token 数相同，实际性能仍可能不同，原因包括：
 
-- model parameter count and architecture;
-- precision and quantization;
-- GPU type and memory bandwidth;
-- batch size and concurrent-request mix;
-- scheduler and continuous-batching behavior;
-- KV Cache allocation, reuse, eviction, and fragmentation;
-- prefix caching;
-- framework, kernel, serialization, and network overhead.
+- 模型参数量与架构；
+- 精度与量化方式；
+- GPU 型号与内存带宽；
+- batch size 与并发请求组成；
+- 调度器和 continuous batching；
+- KV Cache 分配、复用、驱逐和碎片；
+- prefix caching；
+- 框架、kernel、序列化和网络开销。
 
-Token counts describe workload size. They do not by themselves explain end-to-end latency or throughput.
+Token 数描述 workload 规模，但不能单独解释端到端 latency 或 throughput。
 
 ## 5. Common Misconceptions
 
-### 5.1 One character equals one token
+### 5.1 一个字符等于一个 token
 
-False. Tokens are created by tokenizer-specific rules. The project data directly shows different character-to-token relationships across four inputs.
+错误。Token 由 tokenizer-specific 规则产生，当前四组数据已直接反例验证。
 
-### 5.2 One token equals one word
+### 5.2 一个 token 等于一个单词
 
-False. A token can represent a word, subword, punctuation mark, whitespace-bearing segment, character, or byte-like fragment.
+错误。Token 可能是单词、子词、标点、带空格片段、字符或 byte-like 单元。
 
-### 5.3 A token ID has universal meaning
+### 5.3 Token ID 具有跨模型的统一含义
 
-False. IDs are indices in a particular vocabulary. The tokenizer/model pairing must be fixed and recorded.
+错误。ID 是特定 vocabulary 的索引，必须固定 tokenizer/model pairing。
 
-### 5.4 `tokenizer.decode()` is the Serving decode phase
+### 5.4 `tokenizer.decode()` 就是 Serving decode phase
 
-False. `tokenizer.decode()` converts IDs back to text. The Serving **decode phase** repeatedly computes next-token logits and appends generated tokens.
+错误。`tokenizer.decode()` 是 IDs→text。Serving 的 **decode phase** 是不断计算 next-token logits、选择 ID 并 append 的生成阶段。
 
-### 5.5 Greedy search finds the globally best sequence
+### 5.5 Greedy search 找到全局最优序列
 
-False. Greedy search makes the locally highest-scoring choice at each step. It is deterministic under fixed conditions, but it does not search all possible sequences.
+错误。Greedy search 只做逐步局部最高分选择。
 
-### 5.6 Equal output tokens per second means equal visible text speed
+### 5.6 相同 output tokens/s 意味着相同可见文本速度
 
-Not necessarily. Different tokenizers and texts can encode different amounts of visible text per token, so equal token throughput can correspond to different character or word throughput.
+不一定。不同 tokenizer 和文本中，每个 token 承载的可见字符或词数量不同，因此相同 token throughput 可能对应不同的字符/词输出速度。
 
 ## 6. Boundaries and Open Questions
 
-The current evidence establishes:
+当前证据能够说明：
 
-- text→token→ID behavior for four fixed inputs and one Qwen tokenizer;
-- deterministic greedy control flow;
-- EOS and `max_new_tokens` stop paths;
-- stable JSON traces for both experiments.
+- 一个 Qwen tokenizer 对四类固定输入的 text→token→ID 行为；
+- 确定性的 greedy 自回归控制流；
+- EOS 和 `max_new_tokens` 两种停止路径；
+- 两个实验均具有稳定 JSON trace。
 
-It does not establish:
+当前证据不能说明：
 
-- logits or generated text from a real language model;
-- measured prefill latency, time to first token, inter-token latency, or throughput;
-- GPU utilization or memory behavior;
-- KV Cache size, allocation, reuse, or eviction;
-- effects of batching, concurrency, queueing, or network transport;
-- production behavior of vLLM, SGLang, or another Serving engine.
+- 真实语言模型的 logits 或生成质量；
+- 实际 prefill latency、TTFT、ITL、TPOT 或吞吐；
+- GPU utilization 和显存行为；
+- KV Cache 大小、分配、复用或驱逐；
+- batching、并发、排队或网络传输的影响；
+- vLLM、SGLang 或其他 Serving engine 的生产行为。
 
-The next knowledge step is to connect this control-flow foundation to prefill, decode, KV Cache, TTFT, TPOT/ITL, throughput, and queueing measurements.
+下一步需要把当前控制流基础连接到 prefill、decode、KV Cache、TTFT、TPOT/ITL、throughput 和 queueing 的定义与测量。
 
 ## 7. Sources
 

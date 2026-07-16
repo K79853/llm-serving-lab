@@ -32,7 +32,7 @@
       ],
       "steps": [
         {
-          "step ": 1,
+          "step": 1,
           "ids_before": [
             0,
             1
@@ -54,7 +54,7 @@
           "stop_reason": null
         },
         {
-          "step ": 2,
+          "step": 2,
           "ids_before": [
             0,
             1,
@@ -78,7 +78,7 @@
           "stop_reason": null
         },
         {
-          "step ": 3,
+          "step": 3,
           "ids_before": [
             0,
             1,
@@ -126,7 +126,7 @@
       ],
       "steps": [
         {
-          "step ": 1,
+          "step": 1,
           "ids_before": [
             0,
             1
@@ -148,7 +148,7 @@
           "stop_reason": null
         },
         {
-          "step ": 2,
+          "step": 2,
           "ids_before": [
             0,
             1,
@@ -172,7 +172,7 @@
           "stop_reason": null
         },
         {
-          "step ": 3,
+          "step": 3,
           "ids_before": [
             0,
             1,
@@ -198,7 +198,7 @@
           "stop_reason": null
         },
         {
-          "step ": 4,
+          "step": 4,
           "ids_before": [
             0,
             1,
@@ -226,7 +226,7 @@
           "stop_reason": null
         },
         {
-          "step ": 5,
+          "step": 5,
           "ids_before": [
             0,
             1,

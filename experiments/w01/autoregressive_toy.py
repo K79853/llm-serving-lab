@@ -89,7 +89,7 @@ def greedy_generate(
             step_stop_reason = "max_new_tokens"
         stopped = step_stop_reason is not None
         step_record = {
-            "step ": step_number,
+            "step": step_number,
             "ids_before": ids_before,
             "logits": logits,
             "argmax_id": next_id,

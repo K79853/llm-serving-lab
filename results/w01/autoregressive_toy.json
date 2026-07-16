@@ -1,0 +1,278 @@
+{
+  "vocabulary": [
+    {
+      "id": 0,
+      "token": "<bos>"
+    },
+    {
+      "id": 1,
+      "token": "I"
+    },
+    {
+      "id": 2,
+      "token": " like"
+    },
+    {
+      "id": 3,
+      "token": " cats"
+    },
+    {
+      "id": 4,
+      "token": "<eos>"
+    }
+  ],
+  "eos_token_id": 4,
+  "max_new_tokens": 5,
+  "scenarios": [
+    {
+      "name": "eos_path",
+      "prompt_ids": [
+        0,
+        1
+      ],
+      "steps": [
+        {
+          "step ": 1,
+          "ids_before": [
+            0,
+            1
+          ],
+          "logits": [
+            -2.0,
+            0.1,
+            3.2,
+            1.0,
+            -1.0
+          ],
+          "argmax_id": 2,
+          "ids_after": [
+            0,
+            1,
+            2
+          ],
+          "stopped": false,
+          "stop_reason": null
+        },
+        {
+          "step ": 2,
+          "ids_before": [
+            0,
+            1,
+            2
+          ],
+          "logits": [
+            -2.0,
+            0.0,
+            0.2,
+            2.8,
+            -0.5
+          ],
+          "argmax_id": 3,
+          "ids_after": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stopped": false,
+          "stop_reason": null
+        },
+        {
+          "step ": 3,
+          "ids_before": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "logits": [
+            -2.0,
+            -1.0,
+            0.0,
+            0.1,
+            4.0
+          ],
+          "argmax_id": 4,
+          "ids_after": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "stopped": true,
+          "stop_reason": "eos"
+        }
+      ],
+      "generated_ids": [
+        2,
+        3,
+        4
+      ],
+      "final_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "stop_reason": "eos"
+    },
+    {
+      "name": "length_path",
+      "prompt_ids": [
+        0,
+        1
+      ],
+      "steps": [
+        {
+          "step ": 1,
+          "ids_before": [
+            0,
+            1
+          ],
+          "logits": [
+            -2.0,
+            0.1,
+            3.2,
+            1.0,
+            -1.0
+          ],
+          "argmax_id": 2,
+          "ids_after": [
+            0,
+            1,
+            2
+          ],
+          "stopped": false,
+          "stop_reason": null
+        },
+        {
+          "step ": 2,
+          "ids_before": [
+            0,
+            1,
+            2
+          ],
+          "logits": [
+            -2.0,
+            0.0,
+            0.2,
+            2.8,
+            -0.5
+          ],
+          "argmax_id": 3,
+          "ids_after": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stopped": false,
+          "stop_reason": null
+        },
+        {
+          "step ": 3,
+          "ids_before": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "logits": [
+            -2.0,
+            0.0,
+            3.0,
+            0.2,
+            -1.0
+          ],
+          "argmax_id": 2,
+          "ids_after": [
+            0,
+            1,
+            2,
+            3,
+            2
+          ],
+          "stopped": false,
+          "stop_reason": null
+        },
+        {
+          "step ": 4,
+          "ids_before": [
+            0,
+            1,
+            2,
+            3,
+            2
+          ],
+          "logits": [
+            -2.0,
+            0.0,
+            0.2,
+            2.8,
+            -0.5
+          ],
+          "argmax_id": 3,
+          "ids_after": [
+            0,
+            1,
+            2,
+            3,
+            2,
+            3
+          ],
+          "stopped": false,
+          "stop_reason": null
+        },
+        {
+          "step ": 5,
+          "ids_before": [
+            0,
+            1,
+            2,
+            3,
+            2,
+            3
+          ],
+          "logits": [
+            -2.0,
+            0.0,
+            3.0,
+            0.2,
+            -1.0
+          ],
+          "argmax_id": 2,
+          "ids_after": [
+            0,
+            1,
+            2,
+            3,
+            2,
+            3,
+            2
+          ],
+          "stopped": true,
+          "stop_reason": "max_new_tokens"
+        }
+      ],
+      "generated_ids": [
+        2,
+        3,
+        2,
+        3,
+        2
+      ],
+      "final_ids": [
+        0,
+        1,
+        2,
+        3,
+        2,
+        3,
+        2
+      ],
+      "stop_reason": "max_new_tokens"
+    }
+  ]
+}

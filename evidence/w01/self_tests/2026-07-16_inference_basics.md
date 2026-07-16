@@ -2,7 +2,7 @@
 
 - date: 2026-07-16
 - mode: closed-book first attempt
-- first_score: 2/5
+- first_score: 3/5
 - final_score: pending targeted closed-book retest
 - reviewer: project lead
 
@@ -78,4 +78,5 @@ eos停止表示生成了eos token，max_new_tokens停止表示一直生成了max
 - 完全正确：Q3、Q4
 - 部分正确：Q1、Q2
 - 不正确：Q5
+- 计分：`0.5 + 0.5 + 1 + 1 + 0 = 3/5`
 - 当前掌握状态：核心生成循环已掌握；token 定义、Serving workload 证据引用以及“相同 tokens/s 不等于相同体验”仍需一次针对性闭卷复测。
